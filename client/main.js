@@ -55,13 +55,7 @@ const Messages = ({ properties }) => {
     if (properties.pendingMessage === pendingMessageRef.current) {
       return
     }
-
-    if (properties.pendingMessage <= 0) {
-      setPendingMessage("")
-    } else {
-      setPendingMessage(properties[`button${properties.pendingMessage}`])
-    }
-
+    setPendingMessage(properties[`button${properties.pendingMessage}`] || "")
     pendingMessageRef.current = properties.pendingMessage
   }, [properties])
 
