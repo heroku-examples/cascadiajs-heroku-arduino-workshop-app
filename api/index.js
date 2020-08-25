@@ -73,7 +73,7 @@ const main = async () => {
 
 main()
   .then(() => {
-    console.log(`Server ready: https://localhost:${PORT}`)
+    console.log(`Server ready: http://localhost:${PORT}`)
   })
   .catch((e) => {
     console.error(`Server not started due to error: ${e}`)

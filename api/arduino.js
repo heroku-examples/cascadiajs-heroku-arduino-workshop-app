@@ -101,7 +101,7 @@ const setProperties = async (req) => {
 
   await Promise.all(
     Object.entries(data.properties)
-      .filter(([name, value]) => value !== properties[name])
+      .filter(([name, value]) => value !== thing.properties[name])
       .map(([name, value]) =>
         ArduinoIoTCloud.sendProperty(thing.id, name, value)
       )
@@ -112,7 +112,7 @@ const setProperties = async (req) => {
 
 const onPropertyUpdate = async (thingId, propertyName, onUpdate) => {
   await ArduinoIoTCloud.onPropertyValue(thingId, propertyName, (value) => {
-    onUpdate({ [property]: value })
+    onUpdate({ [propertyName]: value })
   })
 }
 
