@@ -1,0 +1,10 @@
+{
+  "env": {
+    "CLIENT_ID": {
+      "description": "Arduino API Client ID"
+    },
+    "CLIENT_SECRET": {
+      "description": "Arduino API Client Secret"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "arduino-client",
+  "version": "1.0.0",
+  "dependencies": {
+    "@arduino/arduino-iot-client": "^1.3.3",
+    "arduino-iot-js": "^0.6.0",
+    "axios": "^0.20.0",
+    "dotenv": "^8.2.0",
+    "micro": "^9.3.4",
+    "microrouter": "^3.1.3",
+    "serve-handler": "^6.1.3",
+    "ws": "^7.3.1"
+  },
+  "devDependencies": {
+    "prettier": "^2.1.0"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "api/index.js",
+  "prettier": {
+    "semi": false
+  },
+  "private": true,
+  "scripts": {
+    "dev": "nodemon --exec 'npm start' -w 'api/' -e 'html,css,js'",
+    "start": "node api/index.js"
+  }
+}
