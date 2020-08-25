@@ -40,18 +40,33 @@ const getThing = async ({ retry = false } = {}) => {
   try {
     const device = await devicesApi
       .devicesV2List()
-      .then((devices) => devices.find((d) => d.type === "mkrwifi1010"))
+      .then(
+        (devices) =>
+          devices &&
+          devices
+            .sort((a, b) => b.last_activity_at - a.last_activity_at)
+            .find((d) => d.type === "mkrwifi1010")
+      )
 
     if (!device) {
-      throw createError(500, "No compatible devices could be found")
+      throw createError(500, "No compatible Device could be found")
     }
 
-    const things = await thingsApi.thingsV2List({
-      deviceId: device.id,
-      showProperties: true,
-    })
+    const thing = await thingsApi
+      .thingsV2List({
+        deviceId: device.id,
+        showProperties: true,
+      })
+      .then(
+        (things) =>
+          things && things.sort((a, b) => b.updated_at - a.updated_at)[0]
+      )
 
-    return things[0]
+    if (!thing) {
+      throw createError(500, "No compatible Thing could be found")
+    }
+
+    return thing
   } catch (e) {
     if (
       !retry &&
@@ -102,6 +117,10 @@ const main = async () => {
 
   const thing = await getThing()
   console.log(`Found thing: ${thing.id}`)
+
+  if (!thing.properties) {
+    throw new Error("Thing has no properties. Those must be created first.")
+  }
 
   const server = micro(
     router(
