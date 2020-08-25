@@ -76,6 +76,5 @@ main()
     console.log(`Server ready: https://localhost:${PORT}`)
   })
   .catch((e) => {
-    console.error("Server not started due to error")
-    console.error(e)
+    console.error(`Server not started due to error: ${e}`)
   })

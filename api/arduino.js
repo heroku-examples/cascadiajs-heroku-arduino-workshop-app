@@ -21,7 +21,7 @@ const getToken = async () => {
     resp.data.access_token
 }
 
-const connectIoT = async (onDisconnect) => {
+const connectIoT = async () => {
   await ArduinoIoTCloud.connect({
     clientId: CLIENT_ID,
     clientSecret: CLIENT_SECRET,
@@ -110,8 +110,8 @@ const setProperties = async (req) => {
   return getProperties()
 }
 
-const onPropertyUpdate = (thingId, propertyName, onUpdate) => {
-  return ArduinoIoTCloud.onPropertyValue(thingId, propertyName, (value) => {
+const onPropertyUpdate = async (thingId, propertyName, onUpdate) => {
+  await ArduinoIoTCloud.onPropertyValue(thingId, propertyName, (value) => {
     onUpdate({ [property]: value })
   })
 }
