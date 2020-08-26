@@ -1,5 +1,4 @@
-node_modules
+node_modules/
 .env
-dist/
-.cache/
-.parcel-cache/
+build/
+src/tailwind.css

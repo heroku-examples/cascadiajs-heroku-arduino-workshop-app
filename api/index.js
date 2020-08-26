@@ -4,6 +4,7 @@ const micro = require("micro")
 const handler = require("serve-handler")
 const { router, get, post } = require("microrouter")
 const WebSocket = require("ws")
+const path = require("path")
 const {
   setProperties,
   getProperties,
@@ -28,13 +29,12 @@ const main = async () => {
   const routes = [
     post("/api/properties", setProperties),
     get("/api/properties", getProperties),
-    PRODUCTION
-      ? get("/*", (req, res) =>
-          handler(req, res, {
-            public: "dist",
-          })
-        )
-      : get("/", () => "ok"),
+    PRODUCTION &&
+      get("/*", (req, res) =>
+        handler(req, res, {
+          public: "build",
+        })
+      ),
   ].filter(Boolean)
 
   const server = micro(router(...routes))
