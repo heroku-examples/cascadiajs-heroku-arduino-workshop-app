@@ -2,6 +2,11 @@ import React, { useState, useRef, Fragment, useEffect } from "react"
 import cx from "classnames"
 import useProperties from "./useArduinoProperties"
 
+const STATUSES = {
+  off: "Off air",
+  on: "On air",
+}
+
 const App = ({ ws }) => {
   const { properties, setProperties, saveProperties } = useProperties({ ws })
 
@@ -25,7 +30,11 @@ const App = ({ ws }) => {
 const Properties = ({ properties, setProperties, saveProperties }) => {
   return (
     <Fragment>
-      <Messages properties={properties} />
+      <Messages
+        properties={properties}
+        setProperties={setProperties}
+        saveProperties={saveProperties}
+      />
       <Form
         properties={properties}
         setProperties={setProperties}
@@ -36,35 +45,39 @@ const Properties = ({ properties, setProperties, saveProperties }) => {
 }
 
 const Messages = ({ properties, saveProperties }) => {
-  const pendingMessageRef = useRef()
-  const [pendingMessage, setPendingMessage] = useState("")
+  const [pendingMessageId, setPendingMessageId] = useState(
+    properties.pendingMessage
+  )
+  const pendingMessageRef = useRef(pendingMessageId)
 
   useEffect(() => {
     if (properties.pendingMessage !== pendingMessageRef.current) {
-      setPendingMessage(properties[`button${properties.pendingMessage}`] || "")
+      setPendingMessageId(properties.pendingMessage)
       pendingMessageRef.current = properties.pendingMessage
     }
   }, [properties])
 
+  const pendingMessage = properties[`button${pendingMessageId}`] || ""
+
   return properties ? (
     <div className="mb-8">
-      <h2 className="text-xl font-medium mb-2">
+      <h2 className="text-lg font-medium mb-3">
         Receive messages from your device
       </h2>
       {pendingMessage ? (
         <div>
-          <div className="border border-red-400 bg-red-200 text-red-800 rounded py-2 px-4 mb-2">
-            {pendingMessage}
+          <div className="flex flex-row justify-between border border-red-400 bg-red-200 text-red-800 rounded py-2 px-4 mb-2">
+            <span>{pendingMessage}</span>
           </div>
           <h2 className="text-sm mb-1">
             Indicate that you've received the message by sending a sound to the
             device.
           </h2>
           <button
-            className="border rounded p-2 bg-green-400 block w-full"
+            className="border rounded p-2 bg-green-600 text-white block w-full"
             onClick={(e) => {
               e.preventDefault()
-              setPendingMessage("")
+              setPendingMessageId(0)
               saveProperties({ pendingMessage: 0 })
             }}
           >
@@ -72,7 +85,7 @@ const Messages = ({ properties, saveProperties }) => {
           </button>
         </div>
       ) : (
-        <div className="border border-green-400 bg-green-200 text-green-900 rounded-sm p-2">
+        <div className="border border-green-400 bg-green-200 text-green-900 rounded p-2">
           No new messages
         </div>
       )}
@@ -86,77 +99,96 @@ const Form = ({ properties, setProperties, saveProperties }) => {
   return (
     <div>
       <div className="mb-8">
-        <h2 className="font-medium mb-2">Set your status</h2>
+        <h2 className="text-lg font-medium mb-3">Set your status</h2>
         <form>
           <div className="flex items-center mb-1">
             <input
-              value="OnAir"
-              checked={properties.status === "OnAir"}
-              onChange={() => setProperties({ status: "OnAir" })}
+              value={STATUSES.on}
+              checked={properties.status === STATUSES.on}
+              onChange={() => {
+                setProperties({ status: STATUSES.on })
+                saveProperties({ status: STATUSES.on })
+              }}
               htmlFor="status-on-air"
               type="radio"
               name="status"
               className="appearance-none h-3 w-3 border border-gray-900 border-gray-400 rounded-full checked:bg-gray-900 focus:outline-none"
             />
             <label id="status-on-air" className="ml-1 block text-sm">
-              On Air
+              On air
             </label>
           </div>
           <div className="flex items-center mb-1">
             <input
-              value="OffAir"
-              checked={properties.status === "OffAir"}
-              onChange={() => setProperties({ status: "OffAir" })}
+              value={STATUSES.off}
+              checked={properties.status === STATUSES.off}
+              onChange={() => {
+                setProperties({ status: STATUSES.off })
+                saveProperties({ status: STATUSES.off })
+              }}
               htmlFor="status-off-air"
               type="radio"
               name="status"
               className="appearance-none h-3 w-3 border border-gray-900 rounded-full checked:bg-gray-900 focus:outline-none"
             />
             <label id="status-off-air" className="ml-1 block text-sm">
-              Off Air
+              Off air
             </label>
           </div>
         </form>
       </div>
 
       <div>
-        <h2 className="font-medium">Configure the button messages</h2>
+        <h2 className="text-lg font-medium mb-3">
+          Configure the button messages
+        </h2>
         <ButtonForm
           label="Button 1"
           name="button1"
           properties={properties}
           saveProperties={saveProperties}
+          setProperties={setProperties}
         />
         <ButtonForm
           label="Button 2"
           name="button2"
           properties={properties}
           saveProperties={saveProperties}
+          setProperties={setProperties}
         />
         <ButtonForm
           label="Button 3"
           name="button3"
           properties={properties}
           saveProperties={saveProperties}
+          setProperties={setProperties}
         />
         <ButtonForm
           label="Button 4"
           name="button4"
           properties={properties}
           saveProperties={saveProperties}
+          setProperties={setProperties}
         />
         <ButtonForm
           label="Button 5"
           name="button5"
           properties={properties}
           saveProperties={saveProperties}
+          setProperties={setProperties}
         />
       </div>
     </div>
   )
 }
 
-const ButtonForm = ({ label, name, properties, saveProperties }) => {
+const ButtonForm = ({
+  label,
+  name,
+  properties,
+  saveProperties,
+  setProperties,
+}) => {
   const [value, setValue] = useState(properties[name])
   const canSubmit = value && value !== properties[name]
 
@@ -165,13 +197,14 @@ const ButtonForm = ({ label, name, properties, saveProperties }) => {
       className="m-0"
       onSubmit={(e) => {
         e.preventDefault()
+        setProperties({ [name]: value })
         saveProperties({ [name]: value })
       }}
     >
-      <label className="block text-sm mt-4 mb-1 font-medium">{label}</label>
-      <div className="flex">
+      <label className="block text-sm mt-2 mb-1 font-medium">{label}</label>
+      <div className="flex w-full md:w-auto">
         <input
-          className="shadow-sm appearance-none border rounded focus:outline-none focus:shadow-outline px-2 py-1 text-sm"
+          className="shadow-sm appearance-none border rounded focus:outline-none focus:shadow-outline px-2 py-1 text-sm flex-grow md:flex-grow-0 md:w-1/2"
           type="text"
           name={name}
           value={value}

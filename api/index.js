@@ -2,9 +2,9 @@ require("dotenv").config()
 
 const micro = require("micro")
 const handler = require("serve-handler")
+const cors = require("micro-cors")()
 const { router, get, post } = require("microrouter")
 const WebSocket = require("ws")
-const path = require("path")
 const {
   setProperties,
   getProperties,
@@ -37,7 +37,7 @@ const main = async () => {
       ),
   ].filter(Boolean)
 
-  const server = micro(router(...routes))
+  const server = micro(cors(router(...routes)))
   const wsServer = new WebSocket.Server({ server })
 
   wsServer.on("connection", (ws) => {

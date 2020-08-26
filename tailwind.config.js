@@ -2,7 +2,7 @@ module.exports = {
   future: {
     removeDeprecatedGapUtilities: true,
   },
-  purge: ["./client/**/*.html", "./client/**/*.js"],
+  purge: ["./src/**/*.html", "./src/**/*.js"],
   theme: {
     extend: {},
   },

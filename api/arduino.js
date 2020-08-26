@@ -106,8 +106,6 @@ const setProperties = async (req) => {
         ArduinoIoTCloud.sendProperty(thing.id, name, value)
       )
   )
-
-  return getProperties()
 }
 
 const onPropertyUpdate = async (thingId, propertyName, onUpdate) => {
