@@ -4,7 +4,6 @@ const micro = require("micro")
 const handler = require("serve-handler")
 const { router, get, post } = require("microrouter")
 const WebSocket = require("ws")
-
 const {
   setProperties,
   getProperties,
@@ -12,7 +11,8 @@ const {
   onPropertyUpdate,
 } = require("./arduino")
 
-const { PORT = 3001 } = process.env
+const { PORT = 3001, NODE_ENV } = process.env
+const PRODUCTION = NODE_ENV === "production"
 
 const main = async () => {
   await init()
@@ -25,18 +25,19 @@ const main = async () => {
     `Properties:\n${properties.map(([k, v]) => `${k}:${v}`).join("\n")}`
   )
 
-  const server = micro(
-    router(
-      post("/api/properties", setProperties),
-      get("/api/properties", getProperties),
-      get("/*", (req, res) =>
-        handler(req, res, {
-          public: "client",
-        })
-      )
-    )
-  )
+  const routes = [
+    post("/api/properties", setProperties),
+    get("/api/properties", getProperties),
+    PRODUCTION
+      ? get("/*", (req, res) =>
+          handler(req, res, {
+            public: "dist",
+          })
+        )
+      : get("/", () => "ok"),
+  ].filter(Boolean)
 
+  const server = micro(router(...routes))
   const wsServer = new WebSocket.Server({ server })
 
   wsServer.on("connection", (ws) => {
