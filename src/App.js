@@ -145,6 +145,7 @@ const Form = ({ properties, setProperties, saveProperties }) => {
         <ButtonForm
           label="Button 1"
           name="button1"
+          placeholder="Lunch is ready"
           properties={properties}
           saveProperties={saveProperties}
           setProperties={setProperties}
@@ -152,6 +153,7 @@ const Form = ({ properties, setProperties, saveProperties }) => {
         <ButtonForm
           label="Button 2"
           name="button2"
+          placeholder="I love you!"
           properties={properties}
           saveProperties={saveProperties}
           setProperties={setProperties}
@@ -159,6 +161,7 @@ const Form = ({ properties, setProperties, saveProperties }) => {
         <ButtonForm
           label="Button 3"
           name="button3"
+          placeholder="See me when you're done"
           properties={properties}
           saveProperties={saveProperties}
           setProperties={setProperties}
@@ -166,6 +169,7 @@ const Form = ({ properties, setProperties, saveProperties }) => {
         <ButtonForm
           label="Button 4"
           name="button4"
+          placeholder="Heading out"
           properties={properties}
           saveProperties={saveProperties}
           setProperties={setProperties}
@@ -173,6 +177,7 @@ const Form = ({ properties, setProperties, saveProperties }) => {
         <ButtonForm
           label="Button 5"
           name="button5"
+          placeholder="Hi!"
           properties={properties}
           saveProperties={saveProperties}
           setProperties={setProperties}
@@ -185,6 +190,7 @@ const Form = ({ properties, setProperties, saveProperties }) => {
 const ButtonForm = ({
   label,
   name,
+  placeholder,
   properties,
   saveProperties,
   setProperties,
@@ -208,6 +214,7 @@ const ButtonForm = ({
           type="text"
           name={name}
           value={value}
+          placeholder={placeholder}
           onChange={(e) => {
             setValue(e.target.value)
           }}
