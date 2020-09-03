@@ -1,10 +1,10 @@
 require("dotenv").config()
 
-const micro = require("micro")
-const handler = require("serve-handler")
-const cors = require("micro-cors")()
-const { router, get, post } = require("microrouter")
+const express = require("express")
+const cors = require("cors")
 const WebSocket = require("ws")
+const http = require("http")
+const bodyParser = require("body-parser")
 const {
   setProperties,
   getProperties,
@@ -26,18 +26,24 @@ const main = async () => {
     `Properties:\n${properties.map(([k, v]) => `${k}:${v}`).join("\n")}`
   )
 
-  const routes = [
-    post("/api/properties", setProperties),
-    get("/api/properties", getProperties),
-    PRODUCTION &&
-      get("/*", (req, res) =>
-        handler(req, res, {
-          public: "build",
-        })
-      ),
-  ].filter(Boolean)
+  const app = express()
+  const server = http.createServer(app)
 
-  const server = micro(cors(router(...routes)))
+  app.use(cors())
+
+  app.get("/api/properties", async (req, res) => {
+    res.json(await getProperties())
+  })
+
+  app.post("/api/properties", bodyParser.json(), async (req, res) => {
+    await setProperties(req.body)
+    res.json({})
+  })
+
+  if (PRODUCTION) {
+    app.use(express.static("build"))
+  }
+
   const wsServer = new WebSocket.Server({ server })
 
   wsServer.on("connection", (ws) => {
@@ -69,7 +75,7 @@ const main = async () => {
     })
   )
 
-  server.listen(PORT)
+  return new Promise((resolve) => server.listen(PORT, resolve))
 }
 
 main()

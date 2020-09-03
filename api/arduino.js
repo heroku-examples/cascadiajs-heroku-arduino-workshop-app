@@ -1,11 +1,16 @@
-const micro = require("micro")
-const { createError, json } = micro
 const axios = require("axios")
 const IotApi = require("@arduino/arduino-iot-client")
 const { ArduinoIoTCloud } = require("arduino-iot-js")
 
 const { CLIENT_ID, CLIENT_SECRET } = process.env
 const DEVICE_TYPE = "mkrwifi1010"
+
+const createError = (code, message, original) => {
+  const err = new Error(message)
+  err.statusCode = code
+  err.originalError = original
+  return err
+}
 
 const getToken = async () => {
   const resp = await axios.post(
@@ -71,7 +76,9 @@ const getProperties = async ({ retry = false } = {}) => {
     return {
       id: thing.id,
       properties: thing.properties.reduce((acc, property) => {
-        acc[property.variable_name] = property.last_value
+        const value =
+          property.last_value === "N/A" ? undefined : property.last_value
+        acc[property.variable_name] = value
         return acc
       }, {}),
     }
@@ -87,7 +94,7 @@ const getProperties = async ({ retry = false } = {}) => {
     }
 
     if (!(e instanceof Error)) {
-      // Make micro accept the kind of errors IotApi throws
+      // Make the IoT error an instanceof error
       throw createError(500, `${e.body.code}: ${e.body.detail}`, e)
     }
 
@@ -95,8 +102,7 @@ const getProperties = async ({ retry = false } = {}) => {
   }
 }
 
-const setProperties = async (req) => {
-  const data = await json(req)
+const setProperties = async (data) => {
   const thing = await getProperties()
 
   await Promise.all(

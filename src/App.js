@@ -1,11 +1,7 @@
 import React, { useState, useRef, Fragment, useEffect } from "react"
 import cx from "classnames"
 import useProperties from "./useArduinoProperties"
-
-const STATUSES = {
-  off: "Off air",
-  on: "On air",
-}
+import { OffAir, OnAir } from "./config"
 
 const App = ({ ws }) => {
   const { properties, setProperties, saveProperties } = useProperties({ ws })
@@ -14,33 +10,23 @@ const App = ({ ws }) => {
     <div className="max-w-screen-md mx-auto">
       <div className="p-4 md:px-16 md:py-8 md:border md:border-gray-300 md:rounded md:shadow-lg md:mt-4 md:mx-4">
         {properties ? (
-          <Properties
-            properties={properties}
-            setProperties={setProperties}
-            saveProperties={saveProperties}
-          />
+          <Fragment>
+            <Messages
+              properties={properties}
+              setProperties={setProperties}
+              saveProperties={saveProperties}
+            />
+            <Form
+              properties={properties}
+              setProperties={setProperties}
+              saveProperties={saveProperties}
+            />
+          </Fragment>
         ) : (
           <h1 className="text-xl text-center">Loading...</h1>
         )}
       </div>
     </div>
-  )
-}
-
-const Properties = ({ properties, setProperties, saveProperties }) => {
-  return (
-    <Fragment>
-      <Messages
-        properties={properties}
-        setProperties={setProperties}
-        saveProperties={saveProperties}
-      />
-      <Form
-        properties={properties}
-        setProperties={setProperties}
-        saveProperties={saveProperties}
-      />
-    </Fragment>
   )
 }
 
@@ -103,11 +89,11 @@ const Form = ({ properties, setProperties, saveProperties }) => {
         <form>
           <div className="flex items-center mb-1">
             <input
-              value={STATUSES.on}
-              checked={properties.status === STATUSES.on}
+              value={OnAir}
+              checked={properties.status === OnAir}
               onChange={() => {
-                setProperties({ status: STATUSES.on })
-                saveProperties({ status: STATUSES.on })
+                setProperties({ status: OnAir })
+                saveProperties({ status: OnAir })
               }}
               htmlFor="status-on-air"
               type="radio"
@@ -120,11 +106,11 @@ const Form = ({ properties, setProperties, saveProperties }) => {
           </div>
           <div className="flex items-center mb-1">
             <input
-              value={STATUSES.off}
-              checked={properties.status === STATUSES.off}
+              value={OffAir}
+              checked={properties.status === OffAir}
               onChange={() => {
-                setProperties({ status: STATUSES.off })
-                saveProperties({ status: STATUSES.off })
+                setProperties({ status: OffAir })
+                saveProperties({ status: OffAir })
               }}
               htmlFor="status-off-air"
               type="radio"
