@@ -1,6 +1,6 @@
 {
   "name": "On-Air Dashboard",
-  "logo": "https://github.com/heroku-examples/cascadiajs-heroku-arduino-workshop/blob/main/public/logo.svg?raw=true",
+  "logo": "https://github.com/heroku-examples/cascadiajs-heroku-arduino-workshop-app/blob/crc/add-logo/public/logo.svg?raw=true",
   "description": "A Node.js application using @arduino/arduino-iot-cloud and the new Explore IoT on Heroku.",
   "env": {
     "CLIENT_ID": {
