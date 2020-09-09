@@ -1,4 +1,4 @@
-# heroku-arduino-demo-client
+# heroku-arduino-workshop-app
 
 A Node.js application using [@arduino/arduino-iot-cloud](https://www.npmjs.com/package/@arduino/arduino-iot-client) and the new [Explore IoT](https://explore-iot.arduino.cc/) on Heroku.
 
